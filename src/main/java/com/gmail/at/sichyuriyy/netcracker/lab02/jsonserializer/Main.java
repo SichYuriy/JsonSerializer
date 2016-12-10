@@ -1,8 +1,9 @@
 package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class Main {
     
@@ -10,18 +11,17 @@ public class Main {
         JsonSerializer serializer = new JsonSerializer();
         serializer.setIndent(true);
         
-        LinkedList<Object> input = new LinkedList<Object>();
-        input.add(1);
-        input.add("str");
-        input.add(null);
-        ArrayList<Object> arrayList = new ArrayList<Object>();
-        arrayList.add(777);
-        arrayList.add(123);
-        arrayList.add("str2");
-        input.add(arrayList);
-        input.add(false);
-       
+        Map<String, Object> input = new LinkedHashMap<String, Object>();
+        input.put("firstName", "Yuriy");
+        input.put("lastName", "Sych");
+        input.put("age", 19);
+        List<String> brothers = new LinkedList<String>();
+        brothers.add("Sergiy");
+        brothers.add("Oleg");
+        input.put("brothers", brothers);
+        
         String actual = serializer.serialize(input);
+       
         System.out.println(actual);
         
         

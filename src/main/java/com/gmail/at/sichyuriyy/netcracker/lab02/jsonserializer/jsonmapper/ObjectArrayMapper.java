@@ -1,23 +1,28 @@
 package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper;
 
-import java.util.Collection;
+import java.lang.reflect.Array;
 
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter.JsonWriter;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.mapperfacroy.AbstractJsonMapperFactory;
 
-public class CollectionMapper implements JsonMapper {
-    
+public class ObjectArrayMapper implements JsonMapper{
+
     private AbstractJsonMapperFactory mapperFactory;
-    
-    public CollectionMapper(AbstractJsonMapperFactory mapperFactory) {
+
+    public ObjectArrayMapper(AbstractJsonMapperFactory mapperFactory) {
         this.mapperFactory = mapperFactory;
-        
+
     }
     
-    
-    public void write(Collection<?> collection, JsonWriter writer) {
+    @Override
+    public void write(Object array, JsonWriter writer) {
+        if (array == null) {
+            writer.writeNull();
+            return;
+        }
         writer.writeArrayBegin();
-        for (Object obj : collection) {
+        for (int i = 0; i < Array.getLength(array); i++) {
+            Object obj = Array.get(array, i);
             if (obj == null) {
                 writer.writeNull();
                 writer.writeSeparator();
@@ -28,20 +33,6 @@ public class CollectionMapper implements JsonMapper {
             writer.writeSeparator();
         }
         writer.writeArrayEnd();
-    } 
-    
-    @Override
-    public void write(Object obj, JsonWriter writer) {
-        if (obj == null) {
-            writer.writeNull();
-            return;
-        }
-        if (obj instanceof Collection<?>) {
-            write((Collection<?>)obj, writer);
-        } else {
-            throw new IllegalArgumentException();
-        }
-        
-    }
 
+    }
 }

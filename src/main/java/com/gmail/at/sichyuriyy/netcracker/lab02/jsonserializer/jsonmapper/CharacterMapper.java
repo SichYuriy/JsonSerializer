@@ -7,7 +7,8 @@ public class CharacterMapper implements JsonMapper {
     public void write(Character obj, JsonWriter writer) {
         writer.writeString(obj.toString());    
     }
-
+    
+    @Override
     public void write(Object obj, JsonWriter writer) {
         if (obj == null) {
             writer.writeNull();

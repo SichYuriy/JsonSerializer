@@ -3,7 +3,10 @@ package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.After;
 import org.junit.Before;
@@ -196,6 +199,43 @@ public class JsonSerializerTest {
         String actual = serializer.serialize(input);
         String expected = "[1,\"str\",null,[777,123,\"str2\"],false]";
         
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testSerialize_Map() {
+        Map<String, Object> input = new LinkedHashMap<String, Object>();
+        input.put("firstName", "Yuriy");
+        input.put("lastName", "Sych");
+        input.put("age", 19);
+        List<String> brothers = new LinkedList<String>();
+        brothers.add("Sergiy");
+        brothers.add("Oleg");
+        input.put("brothers", brothers);
+        
+        String actual = serializer.serialize(input);
+        String expected = "{"
+                + "\"firstName\":\"Yuriy\","
+                + "\"lastName\":\"Sych\","
+                + "\"age\":19,"
+                + "\"brothers\":[\"Sergiy\",\"Oleg\"]"
+                + "}";
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testSerialize_ObjectArray() {
+        String []input = new String[]{"str1", "str2", "str3"};
+        String actual = serializer.serialize(input);
+        String expected = "[\"str1\",\"str2\",\"str3\"]";
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testSerialize_PrimitiveArray() {
+        int []input = new int[]{1, 2, 3};
+        String actual = serializer.serialize(input);
+        String expected = "[1,2,3]";
         assertEquals(expected, actual);
     }
    

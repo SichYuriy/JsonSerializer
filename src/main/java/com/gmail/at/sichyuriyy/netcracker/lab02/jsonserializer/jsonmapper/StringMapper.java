@@ -9,6 +9,7 @@ public class StringMapper implements JsonMapper {
         
     }
     
+    @Override
     public void write(Object obj, JsonWriter writer) {
         if (obj == null) {
             writer.writeNull();

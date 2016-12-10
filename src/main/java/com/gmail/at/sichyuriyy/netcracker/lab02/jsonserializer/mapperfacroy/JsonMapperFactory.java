@@ -8,7 +8,10 @@ import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.Boolea
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.CharacterMapper;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.CollectionMapper;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.JsonMapper;
+import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.MapMapper;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.NumberMapper;
+import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.ObjectArrayMapper;
+import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.PrimitiveArrayMapper;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.StringMapper;
 
 public class JsonMapperFactory extends AbstractJsonMapperFactory {
@@ -16,6 +19,10 @@ public class JsonMapperFactory extends AbstractJsonMapperFactory {
     private Map<Class<?>, JsonMapper> mappers;
     
     private final Class<?> collectionClass = Collection.class;
+    private final Class<?> mapClass = Map.class;
+    
+    private JsonMapper primitiveArrayMapper;
+    private JsonMapper objectArrayMapper;
     
     
     public JsonMapperFactory() {
@@ -26,6 +33,7 @@ public class JsonMapperFactory extends AbstractJsonMapperFactory {
         CharacterMapper characterMapper = new CharacterMapper();
         StringMapper stringMapper = new StringMapper();
         CollectionMapper collectionMapper = new CollectionMapper(this);
+        MapMapper mapMapper = new MapMapper(this);
         
         mappers.put(Byte.class, numberMapper);
         mappers.put(byte.class, numberMapper);
@@ -45,6 +53,10 @@ public class JsonMapperFactory extends AbstractJsonMapperFactory {
         mappers.put(String.class, stringMapper);
         
         mappers.put(collectionClass, collectionMapper);
+        mappers.put(mapClass, mapMapper);
+        
+        this.primitiveArrayMapper = new PrimitiveArrayMapper(this);
+        this.objectArrayMapper = new ObjectArrayMapper(this);
     }
     
     @Override
@@ -54,9 +66,21 @@ public class JsonMapperFactory extends AbstractJsonMapperFactory {
     
     @Override
     public JsonMapper createMapper(Class<?> clazz) {
-        if (Collection.class.isAssignableFrom(clazz)) {
+        if (mapClass.isAssignableFrom(clazz)) {
+            return mappers.get(mapClass);
+        }
+        if (collectionClass.isAssignableFrom(clazz)) {
             return mappers.get(collectionClass);
         }
+        
+        if (clazz.isArray()) {
+            if (clazz.getComponentType().isPrimitive()) {
+                return primitiveArrayMapper;
+            } else {
+                return objectArrayMapper;
+            }
+        }
+        
         JsonMapper mapper = mappers.get(clazz);
         if (mapper == null) {
             mapper = createPojoMapper();
