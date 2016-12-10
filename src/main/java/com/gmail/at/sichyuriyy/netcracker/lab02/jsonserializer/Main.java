@@ -1,12 +1,16 @@
 package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 public class Main {
     
     public static void main(String []args) {
         
-        JsonSerializer serializer = new JsonSerializer();
-        String jsonInt = serializer.serialize(2);
-        System.out.println(jsonInt);
+        Collection<?> setExample = new LinkedList<Integer>();
+        
+        System.out.println(Collection.class.isAssignableFrom(setExample.getClass()));
+        
         
     }
 

@@ -5,16 +5,14 @@ import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter.JsonWr
 public class CharacterMapper implements JsonMapper {
 
     public void write(Character obj, JsonWriter writer) {
-        if (obj == null) {
-            writer.writeNull();
-        } else {
-            writer.writeString(obj.toString());    
-        }
-        
-        
+        writer.writeString(obj.toString());    
     }
 
     public void write(Object obj, JsonWriter writer) {
+        if (obj == null) {
+            writer.writeNull();
+            return;
+        }
         if (obj instanceof Character) {
             write((Character)obj, writer);
         } else {

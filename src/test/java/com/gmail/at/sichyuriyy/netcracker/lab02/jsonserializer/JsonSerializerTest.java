@@ -1,6 +1,9 @@
 package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.LinkedList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -156,6 +159,46 @@ public class JsonSerializerTest {
         String expected = "\"str\"";
         assertEquals(expected, actual);
     }
+    
+    @Test
+    public void testSerialize_Null() {
+        String input = null;
+        String actual = serializer.serialize(input);
+        String expected = "null";
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testSerialize_Collection() {
+        LinkedList<Object> input = new LinkedList<Object>();
+        input.add(1);
+        input.add("str");
+        input.add(null);
+        input.add(false);
+        String actual = serializer.serialize(input);
+        String expected = "[1,\"str\",null,false]";
+        assertEquals(expected, actual);
+    }
+    
+    @Test
+    public void testSerialize_CollectionInCollection() {
+        LinkedList<Object> input = new LinkedList<Object>();
+        input.add(1);
+        input.add("str");
+        input.add(null);
+        ArrayList<Object> arrayList = new ArrayList<Object>();
+        arrayList.add(777);
+        arrayList.add(123);
+        arrayList.add("str2");
+        input.add(arrayList);
+        input.add(false);
+       
+        String actual = serializer.serialize(input);
+        String expected = "[1,\"str\",null,[777,123,\"str2\"],false]";
+        
+        assertEquals(expected, actual);
+    }
+   
     
    
 

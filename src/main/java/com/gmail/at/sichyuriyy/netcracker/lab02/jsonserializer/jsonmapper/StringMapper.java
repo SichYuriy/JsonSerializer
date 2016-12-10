@@ -5,15 +5,15 @@ import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter.JsonWr
 public class StringMapper implements JsonMapper {
 
     public void write(String str, JsonWriter writer) {
-        if (str == null) {
-            writer.writeNull();
-        } else {
-            writer.writeString(str);
-        }
+        writer.writeString(str);
         
     }
     
     public void write(Object obj, JsonWriter writer) {
+        if (obj == null) {
+            writer.writeNull();
+            return;
+        } 
         if (obj instanceof String) {
             write((String)obj, writer);
         } else {

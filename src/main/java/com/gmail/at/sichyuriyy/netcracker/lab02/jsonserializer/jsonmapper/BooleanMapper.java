@@ -6,16 +6,14 @@ public class BooleanMapper implements JsonMapper {
 
     
     public void write(Boolean obj, JsonWriter writer) {
-        if (obj == null) {
-            writer.writeNull();
-        } else {
-            writer.writeBoolean(obj);    
-        }
-        
-        
+        writer.writeBoolean(obj);    
     }
 
     public void write(Object obj, JsonWriter writer) {
+        if (obj == null) {
+            writer.writeNull();
+            return;
+        }
         if (obj instanceof Boolean) {
             write((Boolean)obj, writer);
         } else {
