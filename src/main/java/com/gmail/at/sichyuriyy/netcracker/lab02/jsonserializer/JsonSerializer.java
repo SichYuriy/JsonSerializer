@@ -5,13 +5,8 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.Collection;
 
-import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.BooleanMapper;
-import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.CharacterMapper;
-import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.CollectionMapper;
-import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.NumberMapper;
-import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.StringMapper;
+import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter.IndentedJsonWriter;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter.JsonWriter;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.mapperfacroy.AbstractJsonMapperFactory;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.mapperfacroy.JsonMapperFactory;
@@ -22,9 +17,8 @@ public class JsonSerializer {
     
     protected AbstractJsonMapperFactory mapperFactory;
     
-    
     private boolean indent;
-    
+    private int indentSize = 2;
     
     
     public JsonSerializer(AbstractJsonMapperFactory mapperFactory) {
@@ -58,7 +52,12 @@ public class JsonSerializer {
     }
     
     public void serialize(Object obj, Writer writer) {
-        JsonWriter jsonWriter = new JsonWriter(writer);
+        JsonWriter jsonWriter;
+        if (indent) {
+            jsonWriter = new IndentedJsonWriter(writer, indentSize);
+        } else {
+            jsonWriter = new JsonWriter(writer);
+        }
         if (obj == null) {
             jsonWriter.writeNull();
         } else {
@@ -66,6 +65,14 @@ public class JsonSerializer {
         }
         
         jsonWriter.flush();
+    }
+
+    public int getIndentSize() {
+        return indentSize;
+    }
+
+    public void setIndentSize(int indentSize) {
+        this.indentSize = indentSize;
     }
     
     

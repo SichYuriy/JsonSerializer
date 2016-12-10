@@ -16,8 +16,10 @@ public class JsonWriter {
     protected static final char STR_SEPARATOR = '\"';
     protected static final String NULL = "null";
     
-    private Writer writer;
-    private boolean separatorLast;
+    protected Writer writer;
+    
+    protected boolean separatorLast;
+    
     public JsonWriter(Writer writer) {
         this.writer = writer;
     }

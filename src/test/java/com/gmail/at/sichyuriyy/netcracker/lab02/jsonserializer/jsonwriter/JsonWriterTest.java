@@ -1,7 +1,6 @@
 package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 import java.io.StringWriter;
 
