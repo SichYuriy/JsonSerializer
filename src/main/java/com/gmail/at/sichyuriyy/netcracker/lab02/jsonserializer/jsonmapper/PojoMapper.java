@@ -2,15 +2,15 @@ package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.annotation.JsonIgnore;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.annotation.JsonProperty;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter.JsonWriter;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.mapperfacroy.AbstractJsonMapperFactory;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.reflection.ReflectionUtils;
-import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.reflection.ReflectionUtils.ModifierType;
+import com.sun.istack.internal.logging.Logger;
 
 public class PojoMapper implements JsonMapper {
 
@@ -42,33 +42,40 @@ public class PojoMapper implements JsonMapper {
     private Map<String, String> getFieldsToSerialize(Class<?> clazz) {
         Map<String, String> jsonNameFieldNameMap = new HashMap<String, String>();
         ReflectionUtils reflectionUtils = new ReflectionUtils();
-        Field[] fields = clazz.getDeclaredFields();
-        for (Field field : fields) {
-            if (reflectionUtils.getModifierType(field) == ModifierType.PUBLIC) {
-                String jsonName = field.getName();;
-                if (field.isAnnotationPresent(JsonProperty.class)) {
-                   jsonName = field.getAnnotation(JsonProperty.class).name();
-                   if (jsonName.equals("")) {
-                        jsonName = field.getName();
+
+        List<Field> publicFields = reflectionUtils.getPublicFields(clazz);
+        List<Field> nonPublicFields = reflectionUtils.getNonPublicFields(clazz);
+
+        publicFields.stream()
+                .filter((field) -> !field.isAnnotationPresent(JsonIgnore.class))
+                .forEach((field) -> {
+                   String jsonName = getJsonName(field);
+                   if (field.isAnnotationPresent(JsonProperty.class)) {
+                       jsonNameFieldNameMap.put(jsonName, field.getName());
+                   } else if (!jsonNameFieldNameMap.containsKey(jsonName)) {
+                       jsonNameFieldNameMap.put(jsonName, field.getName());
                    }
-                }
-                Set<String> jsonNameSet = jsonNameFieldNameMap.keySet();
-                if (!jsonNameSet.contains(jsonName) 
-                        && !field.isAnnotationPresent(JsonIgnore.class)) {
-                    jsonNameFieldNameMap.put(jsonName, field.getName());
-                }
-            } else {
-                if (field.isAnnotationPresent(JsonProperty.class)) {
-                    String jsonName = field.getAnnotation(JsonProperty.class).name();
-                    if (jsonName.equals("")) {
-                        jsonName = field.getName();
-                    }
-                    jsonNameFieldNameMap.put(jsonName, field.getName());
-                }
-            }
-        }
+                });
+        
+        nonPublicFields.stream()
+                .filter((field) -> field.isAnnotationPresent(JsonProperty.class))
+                .forEach((field) -> {
+                    jsonNameFieldNameMap.put(getJsonName(field), field.getName());
+                });
+        
 
         return jsonNameFieldNameMap;
+    }
+    
+    private String getJsonName(Field field) {
+        String jsonName = null;
+        if (field.isAnnotationPresent(JsonProperty.class)) {
+            jsonName = field.getAnnotation(JsonProperty.class).name();
+        }
+        if (jsonName == null || jsonName.equals("")) {
+            jsonName = field.getName();
+        }
+        return jsonName;
     }
 
     @Override
@@ -105,18 +112,8 @@ public class PojoMapper implements JsonMapper {
             Field field = clazz.getDeclaredField(fieldName);
             field.setAccessible(true);
             result = field.get(obj);
-        } catch (IllegalArgumentException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (SecurityException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        } catch (Exception e) {
+            Logger.getLogger(PojoMapper.class).warning(fieldName + "is Not accessible");
         }
         return result;
     }

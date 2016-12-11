@@ -301,5 +301,16 @@ public class JsonSerializerTest {
         
         assertEquals(expected, actual);
     }
+    
+    @Test(expected = IllegalStateException.class, timeout=1000)
+    public void testSerialize_IllegalStateException() {
+        Map<String, Object> input = new LinkedHashMap<String, Object>();
+        input.put("firstName", "Yuriy");
+        input.put("", "Sych");
+        
+        String result = serializer.serialize(input);
+        
+        System.out.println(result);
+    }
 
 }

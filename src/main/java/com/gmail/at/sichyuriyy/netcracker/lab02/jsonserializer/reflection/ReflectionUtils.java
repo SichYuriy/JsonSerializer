@@ -2,6 +2,8 @@ package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.reflection;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class ReflectionUtils {
@@ -21,6 +23,27 @@ public class ReflectionUtils {
         } else  {
             return ModifierType.PACKAEG_PRIVATE;
         }
+    }
+    
+    public List<Field> getPublicFields(Class<?> clazz) {
+        List<Field> result = new ArrayList<Field>();
+        for (Field field : clazz.getDeclaredFields()) {
+            if (Modifier.isPublic(field.getModifiers())) {
+                result.add(field);
+            }
+        }
+        
+        return result;
+    }
+    
+    public List<Field> getNonPublicFields(Class<?> clazz) {
+        List<Field> result = new ArrayList<Field>();
+        for (Field field : clazz.getDeclaredFields()) {
+            if (!Modifier.isPublic(field.getModifiers())) {
+                result.add(field);
+            }
+        }
+        return result;
     }
     
 }
