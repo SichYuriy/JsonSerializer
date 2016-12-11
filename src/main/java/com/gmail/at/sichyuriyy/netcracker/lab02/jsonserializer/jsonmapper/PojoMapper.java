@@ -1,10 +1,7 @@
 package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -14,8 +11,6 @@ import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter.JsonWr
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.mapperfacroy.AbstractJsonMapperFactory;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.reflection.ReflectionUtils;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.reflection.ReflectionUtils.ModifierType;
-
-import javafx.util.Pair;
 
 public class PojoMapper implements JsonMapper {
 
@@ -32,10 +27,11 @@ public class PojoMapper implements JsonMapper {
         this.fieldNameJsonNameMap = new HashMap<String, String>();
 
         while (clazz != null) {
-            for (Pair<String, String> pair : getFieldsToSerialize(clazz)) {
-                if (!fieldNameJsonNameMap.containsValue(pair.getValue())) {
-                    fieldNameJsonNameMap.put(pair.getKey(), pair.getValue());
-                    fieldDepthMap.put(pair.getKey(), depth);
+            Map<String, String> fields = getFieldsToSerialize(clazz);
+            for (String jsonName : fields.keySet()) {
+                if (!fieldNameJsonNameMap.containsValue(jsonName)) {
+                    fieldNameJsonNameMap.put(fields.get(jsonName), jsonName);
+                    fieldDepthMap.put(fields.get(jsonName), depth);
                 }
             }
             clazz = clazz.getSuperclass();
@@ -43,9 +39,8 @@ public class PojoMapper implements JsonMapper {
         }
     }
 
-    private List<Pair<String, String>> getFieldsToSerialize(Class<?> clazz) {
-        ArrayList<Pair<String, String>> result = new ArrayList<>();
-        Set<String> fieldNameSet = new HashSet<String>();
+    private Map<String, String> getFieldsToSerialize(Class<?> clazz) {
+        Map<String, String> jsonNameFieldNameMap = new HashMap<String, String>();
         ReflectionUtils reflectionUtils = new ReflectionUtils();
         Field[] fields = clazz.getDeclaredFields();
         for (Field field : fields) {
@@ -57,10 +52,10 @@ public class PojoMapper implements JsonMapper {
                         jsonName = field.getName();
                    }
                 }
-                if (!fieldNameSet.contains(jsonName) 
+                Set<String> jsonNameSet = jsonNameFieldNameMap.keySet();
+                if (!jsonNameSet.contains(jsonName) 
                         && !field.isAnnotationPresent(JsonIgnore.class)) {
-                    fieldNameSet.add(jsonName);
-                    result.add(new Pair<String, String>(field.getName(), jsonName));
+                    jsonNameFieldNameMap.put(jsonName, field.getName());
                 }
             } else {
                 if (field.isAnnotationPresent(JsonProperty.class)) {
@@ -68,13 +63,12 @@ public class PojoMapper implements JsonMapper {
                     if (jsonName.equals("")) {
                         jsonName = field.getName();
                     }
-                    fieldNameSet.add(jsonName);
-                    result.add(new Pair<String, String>(field.getName(), jsonName));
+                    jsonNameFieldNameMap.put(jsonName, field.getName());
                 }
             }
         }
 
-        return result;
+        return jsonNameFieldNameMap;
     }
 
     @Override
