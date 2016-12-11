@@ -8,6 +8,6 @@ public abstract class AbstractJsonMapperFactory {
     
     public abstract JsonMapper createMapper(Class<?> clazz);
     
-    protected abstract JsonMapper createPojoMapper();
+    protected abstract JsonMapper createPojoMapper(Class<?> clazz);
 
 }

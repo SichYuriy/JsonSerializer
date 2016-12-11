@@ -1,9 +1,7 @@
 package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.annotation.JsonIgnore;
+import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.annotation.JsonProperty;
 
 public class Main {
     
@@ -11,20 +9,36 @@ public class Main {
         JsonSerializer serializer = new JsonSerializer();
         serializer.setIndent(true);
         
-        Map<String, Object> input = new LinkedHashMap<String, Object>();
-        input.put("firstName", "Yuriy");
-        input.put("lastName", "Sych");
-        input.put("age", 19);
-        List<String> brothers = new LinkedList<String>();
-        brothers.add("Sergiy");
-        brothers.add("Oleg");
-        input.put("brothers", brothers);
+        Example a = new ExampleChild();
         
-        String actual = serializer.serialize(input);
+        
+        String actual = serializer.serialize(a);
+        
        
         System.out.println(actual);
         
         
+        
     }
 
+}
+
+class Example {
+    
+    public int namedVar = 2;
+    
+    @JsonIgnore
+    public int b = 3;
+    
+    @JsonProperty
+    private String var = "private";
+}
+
+
+class ExampleChild extends Example {
+    
+    public int var = 3;
+    
+    @JsonProperty(name="namedVar")
+    private int a = 123;
 }

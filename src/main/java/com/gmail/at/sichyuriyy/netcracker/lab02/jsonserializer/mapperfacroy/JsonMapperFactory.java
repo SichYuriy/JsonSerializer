@@ -11,6 +11,7 @@ import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.JsonMa
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.MapMapper;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.NumberMapper;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.ObjectArrayMapper;
+import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.PojoMapper;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.PrimitiveArrayMapper;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper.StringMapper;
 
@@ -83,15 +84,15 @@ public class JsonMapperFactory extends AbstractJsonMapperFactory {
         
         JsonMapper mapper = mappers.get(clazz);
         if (mapper == null) {
-            mapper = createPojoMapper();
+            mapper = createPojoMapper(clazz);
             mappers.put(clazz, mapper);
         }
         return mapper;
     }
     
     @Override
-    protected JsonMapper createPojoMapper() {
-        return null;//TODO:
+    protected JsonMapper createPojoMapper(Class<?> clazz) {
+        return new PojoMapper(clazz, this);
     }
     
 }
