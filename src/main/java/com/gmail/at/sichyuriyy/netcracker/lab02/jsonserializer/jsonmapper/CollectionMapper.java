@@ -1,6 +1,7 @@
 package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper;
 
 import java.util.Collection;
+import java.util.Iterator;
 
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter.JsonWriter;
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.mapperfacroy.AbstractJsonMapperFactory;
@@ -17,7 +18,10 @@ public class CollectionMapper implements JsonMapper {
     
     public void write(Collection<?> collection, JsonWriter writer) {
         writer.writeArrayBegin();
-        for (Object obj : collection) {
+        Object obj;
+        Iterator<?> it = collection.iterator();
+        for (int i = 0; i < collection.size() - 1; i++) {
+            obj = it.next();
             if (obj == null) {
                 writer.writeNull();
                 writer.writeSeparator();
@@ -26,6 +30,13 @@ public class CollectionMapper implements JsonMapper {
             JsonMapper mapper = mapperFactory.createMapper(obj.getClass());
             mapper.write(obj, writer);
             writer.writeSeparator();
+        }
+        obj = it.next();
+        if (obj == null) {
+            writer.writeNull();
+        } else {
+            JsonMapper mapper = mapperFactory.createMapper(obj.getClass());
+            mapper.write(obj, writer);
         }
         writer.writeArrayEnd();
     } 

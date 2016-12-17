@@ -29,12 +29,14 @@ public class PrimitiveArrayMapper implements JsonMapper {
         JsonMapper mapper;
         if (Array.getLength(array) > 0) {
             mapper = mapperFactory.createMapper(Array.get(array, 0).getClass());
-            
-            for (int i = 0; i < Array.getLength(array); i++) {
-                Object obj = Array.get(array, i);
+            Object obj;
+            for (int i = 0; i < Array.getLength(array) - 1; i++) {
+                obj = Array.get(array, i);
                 mapper.write(obj, writer);
                 writer.writeSeparator();
             }
+            obj = Array.get(array, Array.getLength(array) - 1);
+            mapper.write(obj, writer);
         }
         
         writer.writeArrayEnd();

@@ -1,5 +1,6 @@
 package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper;
 
+import java.util.Iterator;
 import java.util.Map;
 
 import com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonwriter.JsonWriter;
@@ -17,23 +18,46 @@ private AbstractJsonMapperFactory mapperFactory;
     
     public void write(Map<?, ?> map, JsonWriter writer) {
         writer.writeObjectBegin();
-        for (Object key : map.keySet()) {
+        
+        Object key;
+        Object value;
+        
+        Iterator<?> it = map.keySet().iterator();
+        
+        for (int i = 0; i < map.size() - 1; i++) {
+            key = it.next();
             if (key.toString().equals("")) {
                 throw new IllegalStateException();
             }
             writer.writeString(key.toString());
             writer.writePropertySeparator();
-            Object obj = map.get(key);
+            value = map.get(key);
             
-            if (obj == null) {
+            if (value == null) {
                 writer.writeNull();
                 writer.writeSeparator();
                 continue;
             }
-            JsonMapper mapper = mapperFactory.createMapper(obj.getClass());
-            mapper.write(obj, writer);
+            JsonMapper mapper = mapperFactory.createMapper(value.getClass());
+            mapper.write(value, writer);
             writer.writeSeparator();
         }
+        key = it.next();
+        if (key.toString().equals("")) {
+            throw new IllegalStateException();
+        }
+        writer.writeString(key.toString());
+        writer.writePropertySeparator();
+        value = map.get(key);
+        
+        if (value == null) {
+            writer.writeNull();
+        } else {
+            JsonMapper mapper = mapperFactory.createMapper(value.getClass());
+            mapper.write(value, writer);
+        }
+        
+        
         writer.writeObjectEnd();
     } 
     

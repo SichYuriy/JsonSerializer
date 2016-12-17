@@ -2,6 +2,7 @@ package com.gmail.at.sichyuriyy.netcracker.lab02.jsonserializer.jsonmapper;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -81,24 +82,31 @@ public class PojoMapper implements JsonMapper {
     @Override
     public void write(Object obj, JsonWriter writer) {
         writer.writeObjectBegin();
-        for (String fieldName : fieldNameJsonNameMap.keySet()) {
-            int depth = fieldDepthMap.get(fieldName);
-
-            writer.writeString(fieldNameJsonNameMap.get(fieldName));
-            writer.writePropertySeparator();
-            Object fieldVal = getFieldValue(obj, fieldName, depth);
-
-            if (fieldVal == null) {
-                writer.writeNull();
-                writer.writeSeparator();
-                continue;
-            }
-            JsonMapper mapper = mapperFactory.createMapper(fieldVal.getClass());
-            mapper.write(fieldVal, writer);
+        String fieldName;
+        Iterator<String> it = fieldNameJsonNameMap.keySet().iterator();
+        for (int i = 0; i < fieldNameJsonNameMap.size() - 1; i++) {
+            fieldName = it.next();
+            writeField(writer, fieldName, obj);
             writer.writeSeparator();
         }
+        fieldName = it.next();
+        writeField(writer, fieldName, obj);
         writer.writeObjectEnd();
 
+    }
+    
+    private void writeField(JsonWriter writer, String fieldName, Object obj) {
+        int depth = fieldDepthMap.get(fieldName);
+
+        writer.writeString(fieldNameJsonNameMap.get(fieldName));
+        writer.writePropertySeparator();
+        Object fieldVal = getFieldValue(obj, fieldName, depth);
+
+        if (fieldVal == null) {
+            writer.writeNull();
+        }
+        JsonMapper mapper = mapperFactory.createMapper(fieldVal.getClass());
+        mapper.write(fieldVal, writer);
     }
 
     private Object getFieldValue(Object obj, String fieldName, int depth) {

@@ -38,7 +38,6 @@ public class IndentedJsonWriter extends JsonWriter {
 
     @Override
     public void writeObjectBegin() {
-        checkSeparator();
         try {
             currentLevel++;
             writer.append(OBJ_BEGIN).write(NEW_LINE);
@@ -50,7 +49,6 @@ public class IndentedJsonWriter extends JsonWriter {
 
     @Override
     public void writeObjectEnd() {
-        separatorLast = false;
         try {
             currentLevel--;
             writer.write(NEW_LINE);
@@ -63,7 +61,6 @@ public class IndentedJsonWriter extends JsonWriter {
     
     @Override
     public void writeArrayBegin() {
-        checkSeparator();
         try {
             currentLevel++;
             writer.append(ARR_BEGIN).write(NEW_LINE);
@@ -97,7 +94,7 @@ public class IndentedJsonWriter extends JsonWriter {
     }
 
     @Override
-    protected void writeSeparatorNow() {
+    public void writeSeparator() {
         try {
             writer.append(SEPARATOR).write(NEW_LINE);
             writer.write(getNewLineIndentString());

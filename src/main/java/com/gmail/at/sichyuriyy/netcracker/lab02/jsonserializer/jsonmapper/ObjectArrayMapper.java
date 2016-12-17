@@ -21,8 +21,9 @@ public class ObjectArrayMapper implements JsonMapper{
             return;
         }
         writer.writeArrayBegin();
-        for (int i = 0; i < Array.getLength(array); i++) {
-            Object obj = Array.get(array, i);
+        Object obj;
+        for (int i = 0; i < Array.getLength(array) - 1; i++) {
+            obj = Array.get(array, i);
             if (obj == null) {
                 writer.writeNull();
                 writer.writeSeparator();
@@ -32,6 +33,14 @@ public class ObjectArrayMapper implements JsonMapper{
             mapper.write(obj, writer);
             writer.writeSeparator();
         }
+        obj = Array.get(array, Array.getLength(array) - 1);
+        if (obj == null) {
+            writer.writeNull();
+        } else {
+            JsonMapper mapper = mapperFactory.createMapper(obj.getClass());
+            mapper.write(obj, writer);
+        }
+        
         writer.writeArrayEnd();
 
     }

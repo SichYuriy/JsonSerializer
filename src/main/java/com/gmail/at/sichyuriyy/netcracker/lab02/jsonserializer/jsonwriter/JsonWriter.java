@@ -25,7 +25,6 @@ public class JsonWriter {
     }
 
     public void writeObjectBegin() {
-        checkSeparator();
         try {
             writer.write(OBJ_BEGIN);
         } catch (IOException e) {
@@ -36,7 +35,6 @@ public class JsonWriter {
     }
 
     public void writeObjectEnd() {
-        separatorLast = false;
         try {
             writer.write(OBJ_END);
         } catch (IOException e) {
@@ -45,7 +43,6 @@ public class JsonWriter {
     }
 
     public void writeArrayBegin() {
-        checkSeparator();
         try {
             writer.write(ARR_BEGIN);
         } catch (IOException e) {
@@ -54,7 +51,6 @@ public class JsonWriter {
     }
 
     public void writeArrayEnd() {
-        separatorLast = false;
         try {
             writer.write(ARR_END);
         } catch (IOException e) {
@@ -64,7 +60,6 @@ public class JsonWriter {
     }
 
     public void writeString(String str) {
-        checkSeparator();
         try {
             writer.append(STR_SEPARATOR).append(str).append(STR_SEPARATOR);
         } catch (IOException e) {
@@ -73,7 +68,6 @@ public class JsonWriter {
     }
 
     public void writeNumber(Number number) {
-        checkSeparator();
         try {
             writer.write(number.toString());
         } catch (IOException e) {
@@ -82,7 +76,11 @@ public class JsonWriter {
     }
 
     public void writeSeparator() {
-        separatorLast = true;
+        try {
+            writer.write(SEPARATOR);
+        } catch (IOException e) {
+            throw new JsonWriterIOException();
+        }
     }
     
     public void writePropertySeparator() {
@@ -94,7 +92,6 @@ public class JsonWriter {
     }
     
     public void writeBoolean(Boolean val) {
-        checkSeparator();
         try {
             writer.write(val.toString());
         } catch (IOException e) {
@@ -104,7 +101,6 @@ public class JsonWriter {
     }
     
     public void writeNull() {
-        checkSeparator();
         try {
             writer.write(NULL);
         } catch (IOException e) {
@@ -117,21 +113,6 @@ public class JsonWriter {
             writer.flush();
         } catch (IOException e) {
             throw new JsonWriterIOException();
-        }
-    }
-    
-    protected void writeSeparatorNow() {
-        try {
-            writer.write(SEPARATOR);
-        } catch (IOException e) {
-            throw new JsonWriterIOException();
-        }
-    }
-    
-    protected void checkSeparator() {
-        if (separatorLast) {
-            writeSeparatorNow();
-            separatorLast = false;
         }
     }
 

@@ -140,10 +140,11 @@ public class JsonWriterTest {
         jsonWriter.writeArrayBegin();
         jsonWriter.writeNull();
         jsonWriter.writeSeparator();
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             jsonWriter.writeNumber(i);
             jsonWriter.writeSeparator();
         }
+        jsonWriter.writeNumber(2);
         jsonWriter.writeArrayEnd();
         jsonWriter.flush();
 
